@@ -94,3 +94,6 @@ static/*
 !static/.gitkeep
 media/*
 !media/.gitkeep
+
+db.sqlite3
+.idea/
