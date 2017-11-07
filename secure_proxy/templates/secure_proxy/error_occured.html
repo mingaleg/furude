@@ -1,0 +1,8 @@
+{% extends "secure_proxy/aux_base.html" %}
+
+{% block title %}{{ block.super }} - Error occured{% endblock %}
+
+{% block content %}
+    <h1>Error occured :(</h1>
+    <span>{{ error_message }}</span>
+{% endblock %}
