@@ -14,8 +14,10 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_URL = 'http://localhost:8000'
+BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8000')
 
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -23,10 +25,13 @@ BASE_URL = 'http://localhost:8000'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '%80re=e49e_&&z!fdz_w(ii$2^*-)b1l4e=t3(gfewt^e)0nwu'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    os.environ.get('ALLOWED_HOST', 'localhost'),
+    '127.0.0.1',
+    'localhost',
+]
 
 
 # Application definition
