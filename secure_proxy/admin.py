@@ -1,19 +1,22 @@
 from django.conf import settings
 from django.contrib import admin
+from django.core.exceptions import PermissionDenied
 
 from secure_proxy.models import Cacher, Issuer
 
 
 def invalidate(modeladmin, request, queryset):
-    queryset.update(force_update=True)
+    if not request.user.has_perm('secure_proxy.can_invalidate'):
+        return PermissionDenied
+    for obj in queryset:
+        obj.invalidate()
 
 @admin.register(Cacher)
 class CacherAdmin(admin.ModelAdmin):
     list_display = [
         'uuid_link',
         'url_link',
-        'last_updated',
-        'is_actual',
+        'cached',
     ]
 
     actions = [

@@ -1,8 +1,10 @@
 import datetime
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
@@ -18,6 +20,14 @@ def proxy(request, uuid):
             'error_message': str(E),
         }, status=502)
     return HttpResponse(content)
+
+
+@permission_required('secure_proxy.can_invalidate', raise_exception=True)
+def invalidate(request, uuid):
+    cacher = get_object_or_404(Cacher, uuid=uuid)
+    cacher.invalidate()
+    return redirect(cacher.get_absolute_url())
+
 
 @require_POST
 @csrf_exempt
