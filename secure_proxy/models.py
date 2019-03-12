@@ -66,11 +66,14 @@ class Cacher(models.Model):
         if self.cache_time == 0:
             return self.go_url()
 
-        cached_page = cacher_cache.get_or_set(
-            str(self.uuid),
-            self.go_url(),
-            self.cache_time.seconds
-        )
+        cached_page = cacher_cache.get(str(self.uuid))
+
+        if cacher_cache is None:
+            cacher_page = cacher_cache.get_orset(
+                str(self.uuid),
+                self.go_url(),
+                self.cache_time.seconds
+            )
 
         if cached_page['status'] == 'OK':
             return cached_page['content']
