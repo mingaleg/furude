@@ -33,6 +33,9 @@ class Cacher(models.Model):
     cache_time = models.DurationField(default=datetime.timedelta(minutes=1))
     enabled = models.BooleanField(default=True)
 
+    expect_http_200 = models.BooleanField(default=False)
+    retries_limit = models.PositiveIntegerField(default=3)
+
     issuer = models.ForeignKey('Issuer', blank=True, null=True, editable=False)
 
     def __str__(self):
@@ -41,16 +44,24 @@ class Cacher(models.Model):
     def invalidate(self):
         cacher_cache.delete(str(self.uuid))
 
-    def go_url(self):
-        ret = {}
-        try:
-            ret['content'] = requests.get(self.url).content
-            ret['status'] = 'OK'
-        except requests.RequestException as E:
-            ret['error'] = 'Unable to load destination page'
-            ret['status'] = 'FL'
+    def do_request(self, retried=0):
+            raise CacherException('Unable to load destination page (%d retires)' % retried)
 
-        return ret
+
+    def go_url(self, retried=0):
+        if retried > self.retries_limit:
+            raise CacherException('Unable to load destination page (%d tries)' % retried)
+
+        try:
+            ret = requests.get(self.url)
+            if self.expect_http_200 and ret.status_code != 200:
+                return self.go_url(retried + 1)
+            return {
+                'status': 'OK',
+                'content': ret.content
+            }
+        except requests.RequestException as E:
+            return self.go_url(retried + 1)
 
     def update(self):
         cacher_cache.set(
