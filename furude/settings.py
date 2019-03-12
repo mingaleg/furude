@@ -25,7 +25,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '%80re=e49e_&&z!fdz_w(ii$2^*-)b1l4e=t3(gfewt^e)0nwu'
 
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = os.environ.get('DEBUG', True)
 
 ALLOWED_HOSTS = [
     os.environ.get('ALLOWED_HOST', 'localhost'),
