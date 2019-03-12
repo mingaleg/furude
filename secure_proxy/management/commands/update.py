@@ -15,4 +15,5 @@ class Command(BaseCommand):
                 raise CommandError('Cacher %s does not exists' % cacher_uuid)
 
             ret = cacher.get_content(is_admin=True, timeout=0)
-            self.stdout.write(self.style.SUCCESS(cacher, ret['status']))
+            self.stdout.write('%s %s' % (cacher, ret['status']))
+
