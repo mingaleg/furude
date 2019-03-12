@@ -52,7 +52,7 @@ class Cacher(models.Model):
 
         return ret
 
-    def get_content(self, is_admin):
+    def get_content(self, is_admin=False, timeout=None):
         if not self.enabled and not is_admin:
             raise CacherException("Link is currently suspended".format(self))
 
@@ -62,7 +62,7 @@ class Cacher(models.Model):
         cached_page = cacher_cache.get_or_set(
             str(self.uuid),
             self.go_url(),
-            self.cache_time.seconds
+            timeout or self.cache_time.seconds
         )
 
         if cached_page['status'] == 'OK':
