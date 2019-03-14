@@ -79,8 +79,8 @@ class Cacher(models.Model):
 
         cached_page = cacher_cache.get(str(self.uuid))
 
-        if cacher_page is None:
-            cacher_page = cacher_cache.get_or_set(
+        if cached_page is None:
+            cached_page = cacher_cache.get_or_set(
                 str(self.uuid),
                 self.go_url(),
                 self.cache_time.seconds
